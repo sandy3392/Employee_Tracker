@@ -50,6 +50,19 @@ function askQuestions() {
                 case 'view all employees':
                     viewEmployees();
                     break;
+                
+                case 'add a department':
+                    addDepartment();
+                    break;
+
+                case 'add a role':
+                    addNewRole();
+                    break;
+
+                case 'add an employee':
+                    addNewEmployee();
+                    break;
+
 
             }
         })
@@ -57,6 +70,24 @@ function askQuestions() {
 
 function viewDepartments() {
     const sql = 'SELECT * FROM department';
+    db.query(sql, (err, rows) => {
+        if(err) throw err;
+        console.table(rows);
+        askQuestions();
+    })
+};
+
+function viewRoles() {
+    const sql = 'SELECT * FROM role';
+    db.query(sql, (err, rows) => {
+        if(err) throw err;
+        console.table(rows);
+        askQuestions();
+    })
+};
+
+function viewEmployees() {
+    const sql = 'SELECT * FROM employee';
     db.query(sql, (err, rows) => {
         if(err) throw err;
         console.table(rows);
