@@ -33,7 +33,6 @@ function askQuestions() {
                     'add a department', 
                     'add a role',
                     'add an employee', 
-                    'update an employee role',
                     'Quit'
                     ]
         }
@@ -52,7 +51,7 @@ function askQuestions() {
                     break;
                 
                 case 'add a department':
-                    addDepartment();
+                    addNewDepartment();
                     break;
 
                 case 'add a role':
@@ -63,7 +62,9 @@ function askQuestions() {
                     addNewEmployee();
                     break;
 
-
+                case 'Quit':
+                    quit();
+                    break;
             }
         })
     };
@@ -93,4 +94,96 @@ function viewEmployees() {
         console.table(rows);
         askQuestions();
     })
+};
+function addNewDepartment(){
+    inquirer.prompt ([
+        {
+            type: 'input',
+            name: 'deptname',
+            messege: 'input the department name'
+        }
+    ]).then(function(res){
+
+        const sql = 'INSERT INTO department SET ?';
+        params = {name: res.deptname};
+        db.query(sql , params, (err) => {
+            if (err) throw err 
+            console.table(res);
+            askQuestions();
+        })
+    })
+};
+
+function addNewRole(){
+    inquirer.prompt ([
+        {
+            type: 'input',
+            name: 'title',
+            messege: 'type the new role name'
+        },
+        {
+            type: 'input',
+            name: 'salary',
+            messege: 'enter the salary'
+        }
+    ]).then(function(res){
+        const sql = 'INSERT INTO role SET ?';
+        params = { 
+                    title: res.title,
+                    salary: res.salary                  
+                 };
+        db.query(sql , params, (err) => {
+            if (err) throw err 
+            console.table(res);
+            askQuestions();
+        })
+    })
+};
+let roleArray = [];
+function selectRole() {
+    const sql = 'SELECT title FROM role';
+    db.query(sql,(err,res) => {
+        for (let i = 0; i<res.length ; i++){
+            roleArray.push(res[i].title)
+        }
+    });
+    return roleArray;
+}
+function addNewEmployee(){
+    inquirer.prompt ([
+        {
+            type: 'input',
+            name: 'firstname',
+            messege: 'type the firstname'
+        },
+        {
+            type: 'input',
+            name: 'lastname',
+            messege: 'type the lastname'
+        },
+        {
+            type: 'list',
+            name: 'role',
+            messege: 'employee role',
+            choices: selectRole(),
+        }
+    ]).then(function(res){
+        let roleId = selectRole().indexOf(res.role);
+
+        const sql = 'INSERT INTO employee SET ?';
+        params = { 
+                    first_name: res.firstname,
+                    last_name: res.lastname ,
+                    role_id: roleId           
+                 };
+        db.query(sql , params, (err) => {
+            if (err) throw err 
+            console.table(res);
+            askQuestions();
+        })
+    })
+};
+
+function quit() {
+    db.end();
 };
