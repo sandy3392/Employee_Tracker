@@ -9,4 +9,57 @@ db.connect(err => {
     if (err) throw err;
     console.log('Database connected.');
     // call the inquirer here and start executing logic
-  });
+    askQuestions();
+});
+
+// view all departments, 
+// view all roles, 
+// view all employees,
+// add a department, 
+// add a role,
+// add an employee, 
+// update an employee role
+// exit the application
+
+function askQuestions() {
+    inquirer.prompt([
+        {
+          type: 'list',
+          name: 'option',
+          message: 'Welcome to the Employee Database of our Company',
+          choices: ['view all departments',
+                    'view all roles', 
+                    'view all employees',
+                    'add a department', 
+                    'add a role',
+                    'add an employee', 
+                    'update an employee role',
+                    'Quit'
+                    ]
+        }
+    ]).then(function (res) {
+            switch (res.option){
+                case 'view all departments':
+                    viewDepartments();
+                    break;
+                
+                case 'view all roles':
+                    viewRoles();
+                    break;
+                
+                case 'view all employees':
+                    viewEmployees();
+                    break;
+
+            }
+        })
+    };
+
+function viewDepartments() {
+    const sql = 'SELECT * FROM department';
+    db.query(sql, (err, rows) => {
+        if(err) throw err;
+        console.table(rows);
+        askQuestions();
+    })
+};
